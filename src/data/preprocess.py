@@ -8,7 +8,7 @@ from src.utils.logger import get_logger
 
 logger = get_logger("Preprocessing")
 
-def load_data(path="data/raw/diabetes.csv"):
+def load_data(path="../data/raw/diabetes.csv"):
     logger.info(f"Loading data from {path}")
     return pd.read_csv(path)
 

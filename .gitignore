@@ -12,7 +12,7 @@ ENV/
 # data
 data/raw/
 data/processed/
-plots/
+
 *.joblib
 *.pkl
 
