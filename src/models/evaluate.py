@@ -5,6 +5,8 @@ import os
 from src.utils.logger import get_logger
 
 logger = get_logger("Evaluation")
+PLOT_DIR = "plots"
+os.makedirs(PLOT_DIR, exist_ok=True)
 
 def evaluate_model(model, X, y, model_name="model"):
     y_pred = model.predict(X)
@@ -17,17 +19,18 @@ def evaluate_model(model, X, y, model_name="model"):
     }
     logger.info(f"Evaluation metrics for {model_name}: {metrics}")
 
-    os.makedirs("plots", exist_ok=True)
+    # --- ROC Curve ---
     RocCurveDisplay.from_estimator(model, X, y)
     plt.title(f"{model_name} ROC Curve")
-    plt.savefig(f"plots/{model_name}_roc_curve.png")
+    plt.savefig(os.path.join(PLOT_DIR, f"{model_name}_roc_curve.png"))
     plt.close()
 
+    # --- Confusion Matrix ---
     cm = metrics["Confusion Matrix"]
     plt.figure(figsize=(5,4))
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
     plt.title(f"{model_name} Confusion Matrix")
-    plt.savefig(f"plots/{model_name}_confusion_matrix.png")
+    plt.savefig(os.path.join(PLOT_DIR, f"{model_name}_confusion_matrix.png"))
     plt.close()
 
     return metrics
