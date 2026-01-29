@@ -26,22 +26,24 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 def preprocess_features(df: pd.DataFrame) -> pd.DataFrame:
+    """Full preprocessing: feature engineering, encoding, scaling."""
     # --- Feature Engineering ---
     df = add_age_bins(df)
     df = add_bmi_features(df)
 
-    # --- Encode categorical features ---
+    # --- Encoding categorical features ---
     categorical_cols = ['AgeGroup', 'BMI_Category', 'BMI_Risk']
     logger.info(f"Encoding categorical columns: {categorical_cols}")
     df = pd.get_dummies(df, columns=categorical_cols, drop_first=True)
 
-    # --- Scale numeric features ---
-    numerical_cols = df.select_dtypes(include=['int64','float64']).columns
+    # --- Scaling numeric features (exclude Outcome!) ---
+    numerical_cols = df.select_dtypes(include=['int64','float64']).columns.drop('Outcome')
     logger.info(f"Scaling numeric features: {list(numerical_cols)}")
     scaler = StandardScaler()
     df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
-
+    
     return df
+
 
 def handle_imbalance(X: pd.DataFrame, y: pd.Series):
     logger.info("Handling class imbalance with SMOTE")
