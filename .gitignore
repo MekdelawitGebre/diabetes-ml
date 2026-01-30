@@ -14,7 +14,7 @@ data/raw/
 data/processed/
 
 *.joblib
-*.pkl
+
 
 # jupyter
 .ipynb_checkpoints
