@@ -29,6 +29,20 @@ def scale_features(df, feature_cols=None):
     df[feature_cols] = scaler.fit_transform(df[feature_cols])
     joblib.dump(scaler, "data/processed/scaler.joblib")
     return df
+def preprocess_features(df):
+    # Encode categorical variables
+    categorical_cols = ['AgeGroup', 'BMI_Category', 'BMI_Risk']
+    df = pd.get_dummies(df, columns=categorical_cols, drop_first=True)
+
+    # Scaling numeric features (exclude Outcome if it exists)
+    numerical_cols = df.select_dtypes(include=['int64','float64']).columns
+    if 'Outcome' in numerical_cols:
+        numerical_cols = numerical_cols.drop('Outcome')
+
+    scaler = StandardScaler()
+    df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
+    return df
+
 
 def handle_imbalance(X, y):
     logger.info("Handling class imbalance with SMOTE")
