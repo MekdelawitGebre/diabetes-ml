@@ -25,36 +25,24 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df = df.drop_duplicates()
     return df
 
-def preprocess_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Full preprocessing: feature engineering, encoding, scaling."""
+def preprocess_features(df):
     # --- Feature Engineering ---
     df = add_age_bins(df)
     df = add_bmi_features(df)
 
-    # --- Encoding categorical features ---
+    # --- Encode categorical variables ---
     categorical_cols = ['AgeGroup', 'BMI_Category', 'BMI_Risk']
-    logger.info(f"Encoding categorical columns: {categorical_cols}")
-    df = pd.get_dummies(df, columns=categorical_cols, drop_first=True)
+    # Only encode if these columns exist (safe for single row input)
+    existing_cats = [col for col in categorical_cols if col in df.columns]
+    df = pd.get_dummies(df, columns=existing_cats, drop_first=True)
 
-    # --- Scaling numeric features (exclude Outcome!) ---
-    numerical_cols = df.select_dtypes(include=['int64','float64']).columns.drop('Outcome')
-    logger.info(f"Scaling numeric features: {list(numerical_cols)}")
-    scaler = StandardScaler()
-    df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
-    
-    return df
-def preprocess_features(df):
-    # Encode categorical variables
-    categorical_cols = ['AgeGroup', 'BMI_Category', 'BMI_Risk']
-    df = pd.get_dummies(df, columns=categorical_cols, drop_first=True)
-
-    # Scaling numeric features (exclude Outcome if it exists)
+    # --- Scaling numeric features (exclude Outcome if it exists) ---
     numerical_cols = df.select_dtypes(include=['int64','float64']).columns
     if 'Outcome' in numerical_cols:
         numerical_cols = numerical_cols.drop('Outcome')
-
     scaler = StandardScaler()
     df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
+
     return df
 
 
