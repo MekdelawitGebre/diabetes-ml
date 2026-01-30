@@ -25,22 +25,18 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df = df.drop_duplicates()
     return df
 
-def preprocess_features(df: pd.DataFrame) -> pd.DataFrame:
-    # --- Feature Engineering ---
-    df = add_age_bins(df)
-    df = add_bmi_features(df)
-
-    # --- Encode categorical features ---
+def preprocess_features(df):
+    # Encode categorical variables
     categorical_cols = ['AgeGroup', 'BMI_Category', 'BMI_Risk']
-    logger.info(f"Encoding categorical columns: {categorical_cols}")
     df = pd.get_dummies(df, columns=categorical_cols, drop_first=True)
 
-    # --- Scale numeric features ---
+    # Scaling numeric features (exclude Outcome if it exists)
     numerical_cols = df.select_dtypes(include=['int64','float64']).columns
-    logger.info(f"Scaling numeric features: {list(numerical_cols)}")
+    if 'Outcome' in numerical_cols:
+        numerical_cols = numerical_cols.drop('Outcome')
+
     scaler = StandardScaler()
     df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
-
     return df
 
 def handle_imbalance(X: pd.DataFrame, y: pd.Series):
