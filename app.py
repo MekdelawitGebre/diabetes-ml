@@ -119,7 +119,7 @@ def model_feature_names(m, sample_df):
 # --------------------------
 # SIDEBAR
 # --------------------------
-page = st.sidebar.radio("Navigation", ["Home", "Dashboard", "Model Insights", "Patient History", "Batch Upload", "About", "Settings"])
+page = st.sidebar.radio("Navigation", ["Home", "Dashboard", "Patient History", "Batch Upload", "About", "Settings"])
 st.sidebar.markdown("---")
 threshold = st.sidebar.slider("Decision threshold", 0.0, 1.0, 0.5, step=0.01)
 
@@ -209,55 +209,6 @@ elif page == "Dashboard":
                 st.warning(f"SHAP computation failed: {e}")
 
 # --------------------------
-# MODEL INSIGHTS
-# --------------------------
-elif page == "Model Insights":
-    st.header("📊 Model Insights & Performance")
-
-    uploaded = st.file_uploader("Upload CSV to compute validation metrics", type=["csv"])
-    if uploaded:
-        try:
-            df_train = pd.read_csv(uploaded)
-            X = preprocess_features(clean_data(df_train)).drop(columns=["Outcome"], errors="ignore")
-            y = df_train["Outcome"]
-            X = X.reindex(columns=model_feature_names(model, X), fill_value=0)
-            y_prob = model.predict_proba(X)[:,1]
-
-            # Feature importance
-            importances = model.feature_importances_
-            feat_names = model_feature_names(model, pd.DataFrame(columns=[]))
-            fi = pd.Series(importances, index=feat_names).sort_values()
-            fig_fi = px.bar(fi.tail(15), orientation='h', title="Top Feature Importances", color=fi.tail(15),
-                            color_continuous_scale="Blues")
-            st.plotly_chart(fig_fi, use_container_width=True)
-
-            # ROC
-            fpr, tpr, _ = roc_curve(y, y_prob)
-            auc = roc_auc_score(y, y_prob)
-            roc_fig = go.Figure()
-            roc_fig.add_trace(go.Scatter(x=fpr, y=tpr, mode='lines', name=f"ROC (AUC={auc:.2f})", line=dict(color='blue')))
-            roc_fig.add_trace(go.Scatter(x=[0,1], y=[0,1], mode='lines', line=dict(dash='dash', color='gray')))
-            roc_fig.update_layout(title="ROC Curve", xaxis_title="False Positive Rate", yaxis_title="True Positive Rate")
-            st.plotly_chart(roc_fig, use_container_width=True)
-
-
-            # Calibration
-            prob_true, prob_pred = calibration_curve(y, y_prob, n_bins=10)
-            calib_fig = go.Figure()
-            calib_fig.add_trace(go.Scatter(x=prob_pred, y=prob_true, mode='lines+markers', name='Calibration', line=dict(color='orange')))
-            calib_fig.add_trace(go.Scatter(x=[0,1], y=[0,1], mode='lines', line=dict(dash='dash', color='gray')))
-            calib_fig.update_layout(title="Calibration Curve", xaxis_title="Predicted Probability", yaxis_title="Observed Probability")
-            st.plotly_chart(calib_fig, use_container_width=True)
-
-
-
-
-        except Exception as e:
-            st.error(f"Error processing uploaded CSV: {e}")
-    else:
-        st.info("Upload a CSV file to visualize validation metrics.")
-
-# --------------------------
 # PATIENT HISTORY
 # --------------------------
 elif page == "Patient History":
@@ -303,7 +254,6 @@ elif page == "About":
     st.write("Key features:")
     st.markdown("- Real-time patient predictions with probability & SHAP explanations.")
     st.markdown("- Historical tracking & batch upload predictions.")
-    st.markdown("- Model insights: Feature importance, ROC, Precision-Recall, Calibration, Confusion Matrix.")
     st.markdown("- Interactive visualizations for KPIs, risk distributions, and trends.")
     st.write("Built with Streamlit, Plotly, XGBoost, and SHAP.")
 
