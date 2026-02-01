@@ -248,14 +248,14 @@ elif page == "Batch Upload":
 # ABOUT
 # --------------------------
 elif page == "About":
-    st.header("ℹ️ About This Dashboard")
-    st.write("This Hospital Diabetes Risk Dashboard is a production-ready clinical decision support tool.")
-    st.write("It uses a pre-trained XGBoost model on the Pima Indians Diabetes dataset to predict diabetes risk.")
+    st.header("About This Dashboard")
+    st.write("This is Hospital Diabetes Risk Dashboard for clinical decision support tool.")
+    st.write("It uses a pre-trained model on the Pima Indians Diabetes dataset to predict diabetes risk.")
     st.write("Key features:")
     st.markdown("- Real-time patient predictions with probability & SHAP explanations.")
     st.markdown("- Historical tracking & batch upload predictions.")
     st.markdown("- Interactive visualizations for KPIs, risk distributions, and trends.")
-    st.write("Built with Streamlit, Plotly, XGBoost, and SHAP.")
+  
 
 # --------------------------
 # SETTINGS
