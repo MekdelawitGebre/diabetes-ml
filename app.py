@@ -76,8 +76,7 @@ def init_db():
 def save_history(row):
     conn = sqlite3.connect(DB_PATH)
     conn.execute("""
-    INSERT INTO history (timestamp,pregnancies,glucose,bloodpressure,skinthickness,
-                         insulin,bmi,dpf,age,prediction,probability,notes)
+    INSERT INTO history (timestamp,pregnancies,glucose,bloodpressure,skinthickness,insulin,bmi,dpf,age,prediction,probability,notes)
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
     """, row)
     conn.commit()
