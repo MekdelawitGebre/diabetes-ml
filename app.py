@@ -177,7 +177,7 @@ elif page == "Dashboard":
         DiabetesPedigreeFunction = st.number_input("Diabetes Pedigree Function", 0.0, 2.5, 0.5)
         Age = st.number_input("Age", 0, 120, 35)
         
-   doctor_notes = st.text_area("Clinical Notes", placeholder="Enter patient notes ...")
+        doctor_notes = st.text_area("Clinical Notes", placeholder="Enter patient notes ...")
 
     if st.button("🩺 Predict Risk"):
         with st.spinner("🤖 AI is processing..."):
