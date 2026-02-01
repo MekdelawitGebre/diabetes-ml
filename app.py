@@ -67,8 +67,7 @@ def init_db():
         dpf REAL,
         age INTEGER,
         prediction INTEGER,
-        probability REAL,
-        notes TEXT
+        probability REAL
     )""")
     conn.commit()
     conn.close()
@@ -76,8 +75,8 @@ def init_db():
 def save_history(row):
     conn = sqlite3.connect(DB_PATH)
     conn.execute("""
-    INSERT INTO history (timestamp,pregnancies,glucose,bloodpressure,skinthickness,insulin,bmi,dpf,age,prediction,probability,notes)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+    INSERT INTO history (timestamp,pregnancies,glucose,bloodpressure,skinthickness,insulin,bmi,dpf,age,prediction,probability)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?)
     """, row)
     conn.commit()
     conn.close()
@@ -175,8 +174,6 @@ elif page == "Dashboard":
     with col3:
         DiabetesPedigreeFunction = st.number_input("Diabetes Pedigree Function", 0.0, 2.5, 0.5)
         Age = st.number_input("Age", 0, 120, 35)
-        
-        doctor_notes = st.text_area("Clinical Notes", placeholder="Enter patient notes ...")
 
     if st.button("🩺 Predict Risk"):
         with st.spinner("🤖 AI is processing..."):
@@ -187,9 +184,8 @@ elif page == "Dashboard":
             X_input = df_proc.reindex(columns=model_feature_names(model, df_proc), fill_value=0)
             prediction = int(model.predict(X_input)[0])
             probability = float(model.predict_proba(X_input)[0][1])
-            save_history((datetime.utcnow().isoformat(), Pregnancies, Glucose, BloodPressure, 
-                  SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age, 
-                  prediction, probability, doctor_notes))
+            save_history((datetime.utcnow().isoformat(), Pregnancies, Glucose, BloodPressure, SkinThickness,
+                          Insulin, BMI, DiabetesPedigreeFunction, Age, prediction, probability))
 
         col1, col2 = st.columns(2)
         with col1:
