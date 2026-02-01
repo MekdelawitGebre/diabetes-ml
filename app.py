@@ -128,7 +128,7 @@ threshold = st.sidebar.slider("Decision threshold", 0.0, 1.0, 0.5, step=0.01)
 # --------------------------
 if page == "Home":
     st.markdown('<p class="big-title">🏥 Hospital Diabetes Risk Dashboard</p>', unsafe_allow_html=True)
-    st.markdown('<p class="sub">Interactive overview of predictions and AI insights</p>', unsafe_allow_html=True)
+
 
     history = get_history(limit=1000)
     total = len(history)
